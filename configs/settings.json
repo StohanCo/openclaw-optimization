@@ -1,0 +1,28 @@
+{
+  "_comment": "Token-optimized OpenClaw runtime settings. Copy to ~/.openclaw/settings.json",
+
+  "model": "claude-sonnet-4-5",
+
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-haiku-4-5",
+
+    "MAX_THINKING_TOKENS": "10000",
+
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "50",
+
+    "OLLAMA_BASE_URL": "http://127.0.0.1:11434"
+  },
+
+  "limits": {
+    "_comment": "Adjust monthly_usd to match your budget. OpenClaw will warn you when approaching the limit.",
+    "monthly_usd": 80
+  },
+
+  "_notes": {
+    "model": "Use claude-sonnet-4-5 as the default. Only invoke claude-opus-4-5 explicitly for complex orchestration tasks.",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "Sub-agents performing file reads, searches, and simple edits use Haiku by default. Override per-agent in agents/<id>/agent/config.json if needed.",
+    "MAX_THINKING_TOKENS": "Reduced from the 32k default to 10k. Handles ~90% of tasks. Raise to 20000-32000 only for large-scale refactoring or architectural design sessions.",
+    "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "Trigger auto-compaction at 50% of context window instead of 95%. Keeps context lean and prevents runaway token accumulation. Use /compact manually at phase boundaries.",
+    "OLLAMA_BASE_URL": "Points to the local Ollama API server. Change the port if you have reconfigured Ollama."
+  }
+}

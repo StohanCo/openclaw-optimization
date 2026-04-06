@@ -1,0 +1,118 @@
+{
+  "_comment": "Multi-agent OpenClaw configuration template. Copy to ~/.openclaw/openclaw.json and edit the accountId values to match your connected channels.",
+
+  "agents": {
+    "list": [
+      {
+        "id": "orchestrator",
+        "name": "Project Manager",
+        "workspace": "~/.openclaw/workspace-orchestrator",
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-5"
+        },
+        "skills": ["product-context"],
+        "description": "Routes tasks to specialist agents and synthesises results. Use Opus only for the hardest problems."
+      },
+      {
+        "id": "ux",
+        "name": "UX Designer",
+        "workspace": "~/.openclaw/workspace-ux",
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-5"
+        },
+        "skills": ["product-context", "brand-guidelines"],
+        "description": "Wireframes, user flows, accessibility notes, design feedback."
+      },
+      {
+        "id": "marketing",
+        "name": "Marketing Lead",
+        "workspace": "~/.openclaw/workspace-marketing",
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-5"
+        },
+        "skills": ["product-context", "brand-guidelines"],
+        "description": "Conversion copy, campaign planning, SEO, analytics."
+      },
+      {
+        "id": "coding",
+        "name": "Senior Developer",
+        "workspace": "~/.openclaw/workspace-coding",
+        "model": {
+          "provider": "anthropic",
+          "name": "claude-sonnet-4-5"
+        },
+        "skills": ["product-context", "coding-standards"],
+        "description": "Feature development, code review, pull requests."
+      },
+      {
+        "id": "engineering",
+        "name": "Platform Engineer",
+        "workspace": "~/.openclaw/workspace-engineering",
+        "model": {
+          "provider": "ollama",
+          "name": "qwen2.5-coder:7b",
+          "baseUrl": "http://127.0.0.1:11434"
+        },
+        "skills": ["product-context", "coding-standards"],
+        "description": "Infrastructure, CI/CD, Docker, deployment pipelines. Uses local LLM for cost efficiency."
+      },
+      {
+        "id": "qa",
+        "name": "QA Analyst",
+        "workspace": "~/.openclaw/workspace-qa",
+        "model": {
+          "provider": "ollama",
+          "name": "qwen2.5-coder:7b",
+          "baseUrl": "http://127.0.0.1:11434"
+        },
+        "skills": ["coding-standards"],
+        "description": "Test generation, bug triage. Uses local LLM for cost efficiency."
+      }
+    ]
+  },
+
+  "bindings": [
+    {
+      "_comment": "Replace 'main', 'design', 'marketing', 'dev', 'engineering' with your actual channel account IDs",
+      "agentId": "orchestrator",
+      "match": { "channel": "slack", "accountId": "main" }
+    },
+    {
+      "agentId": "ux",
+      "match": { "channel": "slack", "accountId": "design" }
+    },
+    {
+      "agentId": "marketing",
+      "match": { "channel": "slack", "accountId": "marketing" }
+    },
+    {
+      "agentId": "coding",
+      "match": { "channel": "discord", "accountId": "dev" }
+    },
+    {
+      "agentId": "engineering",
+      "match": { "channel": "discord", "accountId": "engineering" }
+    }
+  ],
+
+  "modelRouting": {
+    "_comment": "Rules are evaluated top to bottom. First match wins.",
+    "rules": [
+      { "taskType": "file_read",         "provider": "ollama",    "model": "llama3.3:8b" },
+      { "taskType": "route_decision",    "provider": "ollama",    "model": "llama3.3:8b" },
+      { "taskType": "code_edit_simple",  "provider": "ollama",    "model": "qwen2.5-coder:7b" },
+      { "taskType": "test_generation",   "provider": "ollama",    "model": "qwen2.5-coder:7b" },
+      { "taskType": "code_edit_complex", "provider": "anthropic", "model": "claude-sonnet-4-5" },
+      { "taskType": "orchestration",     "provider": "anthropic", "model": "claude-sonnet-4-5" },
+      { "taskType": "architecture",      "provider": "anthropic", "model": "claude-opus-4-5" }
+    ]
+  },
+
+  "gateway": {
+    "port": 3000,
+    "host": "127.0.0.1"
+  }
+}
