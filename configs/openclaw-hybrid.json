@@ -1,0 +1,136 @@
+{
+  "models": {
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://127.0.0.1:11434/v1",
+        "apiKey": "ollama-local",
+        "api": "openai-responses",
+        "models": [
+          {
+            "id": "qwen3.5:27b",
+            "name": "Qwen 3.5 27B (Local - Coding/Engineering)",
+            "contextWindow": 32768,
+            "maxOutput": 8192
+          },
+          {
+            "id": "llama3.3:8b",
+            "name": "Llama 3.3 8B (Local - General/Marketing/UX)",
+            "contextWindow": 32768,
+            "maxOutput": 4096
+          },
+          {
+            "id": "mistral:7b",
+            "name": "Mistral 7B (Local - Fast/QA)",
+            "contextWindow": 32768,
+            "maxOutput": 4096
+          },
+          {
+            "id": "deepseek-r1:32b",
+            "name": "DeepSeek R1 32B (Local - Reasoning)",
+            "contextWindow": 32768,
+            "maxOutput": 8192
+          }
+        ]
+      },
+      "anthropic": {
+        "apiKey": "${ANTHROPIC_API_KEY}",
+        "models": [
+          {
+            "id": "claude-opus-4-6",
+            "name": "Claude Opus 4.6 (Cloud - Complex Orchestration)",
+            "contextWindow": 200000,
+            "maxOutput": 32768
+          },
+          {
+            "id": "claude-sonnet-4-6",
+            "name": "Claude Sonnet 4.6 (Cloud - Default Orchestrator)",
+            "contextWindow": 200000,
+            "maxOutput": 32768
+          },
+          {
+            "id": "claude-haiku-4-5",
+            "name": "Claude Haiku 4.5 (Cloud - Cheap Fallback)",
+            "contextWindow": 200000,
+            "maxOutput": 16384
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "ollama/qwen3.5:27b",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-6"
+        ]
+      },
+      "compaction": {
+        "mode": "safeguard",
+        "model": "ollama/llama3.3:8b"
+      },
+      "contextPruning": {
+        "mode": "cache-ttl",
+        "ttl": "1h"
+      },
+      "params": {
+        "cacheRetention": "long"
+      },
+      "heartbeat": {
+        "every": "55m"
+      }
+    },
+    "orchestrator": {
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-6",
+        "fallbacks": [
+          "anthropic/claude-opus-4-6"
+        ]
+      },
+      "compaction": {
+        "mode": "safeguard",
+        "model": "ollama/llama3.3:8b"
+      }
+    },
+    "ux-designer": {
+      "model": {
+        "primary": "ollama/llama3.3:8b",
+        "fallbacks": [
+          "anthropic/claude-haiku-4-5"
+        ]
+      }
+    },
+    "marketer": {
+      "model": {
+        "primary": "ollama/llama3.3:8b",
+        "fallbacks": [
+          "anthropic/claude-haiku-4-5"
+        ]
+      }
+    },
+    "coder": {
+      "model": {
+        "primary": "ollama/qwen3.5:27b",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-6"
+        ]
+      }
+    },
+    "engineer": {
+      "model": {
+        "primary": "ollama/qwen3.5:27b",
+        "fallbacks": [
+          "anthropic/claude-sonnet-4-6"
+        ]
+      }
+    },
+    "qa-tester": {
+      "model": {
+        "primary": "ollama/mistral:7b",
+        "fallbacks": [
+          "anthropic/claude-haiku-4-5"
+        ]
+      }
+    }
+  }
+}
